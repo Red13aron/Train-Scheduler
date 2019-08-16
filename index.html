@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
-
+    <link rel = "stylesheet" href="assets/css/style.css" />
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -27,10 +27,10 @@
         <div class="row">
             <div class="col-12">
                 <div id=main-content>
-                    <div class="jumbotron bg-dark text-light text-center">
+                    <div class="jumbotron brown-background text-light text-center">
                         <div class="container">
-                            <h1 class="display-4">Employee Data Management</h1>
-                            <h3>words and things</h3>
+                            <h1 class="display-4">Anytime is Train Time</h1>
+                            <h3>Choo Choo and all that</h3>
                         </div>
                     </div>
                 </div>
@@ -40,20 +40,19 @@
         <div class="row">
             <div class="col-12">
                 <div class="card mb-3" style="width: 100%;">
-                    <h5 class="card-header">Current Employees</h5>
+                    <h5 class="card-header text-white blue-background">Current Train Schedule</h5>
                     <div class="card-body">
-                        <table class="table" id="employee-table">
+                        <table class="table" id="train-table">
                             <thead>
                                 <tr>
-                                    <th scope="col">Employee Name</th>
-                                    <th scope="col">Role</th>
-                                    <th scope="col">Start Date</th>
-                                    <th scope="col">Months Worked</th>
-                                    <th scope="col">Monthly Rate ($)</th>
-                                    <th scope="col">Total Billed ($)</th>
+                                    <th scope="col">Train Name</th>
+                                    <th scope="col">Destination</th>
+                                    <th scope="col">Frequency</th>
+                                    <th scope="col">Next Arrival</th>
+                                    <th scope="col">Minutes Away</th>
                                 </tr>
                             </thead>
-                            <tbody id="employee-table-body">
+                            <tbody id="train-table-body">
                                 <!-- employee info goes here -->
                             </tbody>
                         </table>
@@ -65,24 +64,24 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <h5 class="card-header">Add Employee</h5>
+                    <h5 class="card-header text-white blue-background">Add Train</h5>
                     <div class="card-body">
                         <form>
                             <div class="form-group">
-                                <label for="employeeName">Employee Name</label>
-                                <input type="text" class="form-control" id="employeeName">
+                                <label for="trainName">Train Name</label>
+                                <input type="text" class="form-control" id="trainName">
                             </div>
                             <div class="form-group">
-                                <label for="role">Role</label>
-                                <input type="text" class="form-control" id="role">
+                                <label for="destination">Destination</label>
+                                <input type="text" class="form-control" id="destination">
                             </div>
                             <div class="form-group">
-                                <label for="startDate">Start Date</label>
-                                <input type="date" class="form-control" id="startDate">
+                                <label for="firstArrival">First Train Time (HH:mm:AM/PM)</label>
+                                <input type="time" class="form-control" id="firstArrival">
                             </div>
                             <div class="form-group">
-                                <label for="monthlyRate">Monthly Rate</label>
-                                <input type="text" class="form-control" id="monthlyRate">
+                                <label for="frequency">Frequency(min)</label>
+                                <input type="text" class="form-control" id="frequency">
                             </div>
                             <span class="text-right">
                                 <button type="button" class="btn btn-primary" id="submitButton">Submit</button>

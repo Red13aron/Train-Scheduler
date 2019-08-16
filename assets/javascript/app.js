@@ -1,124 +1,209 @@
-function getEmployeeData(cb) {
-    localforage.getItem("employe-data").then(function (result) {
+function getTrainData(cb) {
+    localforage.getItem("train-data").then(function (result) {
         cb(result || []); //{fill in with example info later}
     });
 }
 
-function setEmployeeData(newEmployeeData, cb) {
-    localforage.setItem("employe-data", newEmployeeData).then(cb);
+function setTrainData(newTrainData, cb) {
+    localforage.setItem("train-data", newTrainData).then(cb);
 }
 
-function handleEmployeeData(newEmployeeName, newRole, newStartDate, newMonthlyRate) {
-    getEmployeeData(function (employeeData) {
-        employeeData.push({
-            employeeName: newEmployeeName,
-            role: newRole,
-            startDate: newStartDate,
-            monthlyRate: newMonthlyRate
+function handleTrainData(newTrainName, newDestination, newFirstArrival, newFrequency) {
+    getTrainData(function (trainData) {
+        trainData.push({
+            trainName: newTrainName,
+            destination: newDestination,
+            firstArrival: newFirstArrival,
+            frequency: newFrequency
         });
-        console.log(employeeData);
-        setEmployeeData(employeeData, updateEmployeeData);
+        console.log(trainData);
+        setTrainData(trainData, updateTrainData);
     });
 }
 
 function addData() {
-    document.getElementById("submitButton").addEventListener("click", function(event) {
-        const employeName = document.getElementById("employeeName").value;
-        const role = document.getElementById("role").value;
-        const startDate = document.getElementById("startDate").value;
-        const monthlyRate = document.getElementById("monthlyRate").value;
-        handleEmployeeData(employeName, role, startDate, monthlyRate);
+    document.getElementById("submitButton").addEventListener("click", function (event) {
+        const trainName = document.getElementById("trainName").value;
+        const destination = document.getElementById("destination").value;
+        console.log(document.getElementById("firstArrival").value);
+        const firstArrival = document.getElementById("firstArrival").value;
+        const frequency = document.getElementById("frequency").value;
+        handleTrainData(trainName, destination, firstArrival, frequency);
         console.log("addData trigger");
     })
 }
 
-addData();
+addData()
 
-function updateEmployeeData() {
+function updateTrainData() {
     //get container where data is supposed to go
-    const employeeTable = document.getElementById("employee-table");
-    const employeeTableBody = document.getElementById("employee-table-body");
+    const trainTable = document.getElementById("train-table");
+    const trainTableBody = document.getElementById("train-table-body");
 
     //create element for data
-    const employeeTR = document.createElement("tr");
+    const trainTR = document.createElement("tr");
     //populate element with data
-    getEmployeeData(function(employeeData) {
+    getTrainData(function (trainData) {
         //do stuff
-        const employeeNameTD = document.createElement("td");
-        const roleTD = document.createElement("td");
-        const startDateTD = document.createElement("td");
-        const monthsWorkedTD = document.createElement("td");
-        const monthlyRateTD = document.createElement("td");
-        const totalBilledTD = document.createElement("td");
+        const trainNameTD = document.createElement("td");
+        const destinationTD = document.createElement("td");
+        const frequencyTD = document.createElement("td");
+        const nextArrivalTD = document.createElement("td");
+        const minutesAwayTD = document.createElement("td");
 
         //get new employee data
-        let employee = employeeData[employeeData.length - 1];
-        
+        let train = trainData[trainData.length - 1];
+        // Solved Mathematically
+        // Test case 1:
+        // 16 - 00 = 16
+        // 16 % 3 = 1 (Modulus is the remainder)
+        // 3 - 1 = 2 minutes away
+        // 2 + 3:16 = 3:18
+
+        // Solved Mathematically
+        // Test case 2:
+        // 16 - 00 = 16
+        // 16 % 7 = 2 (Modulus is the remainder)
+        // 7 - 2 = 5 minutes away
+        // 5 + 3:16 = 3:21
+
+        // Assumptions
+        const tFrequency = train.frequency;
+
+        // Time is 3:30 AM
+        const firstTime = train.firstArrival;
+
+        // First Time (pushed back 1 year to make sure it comes before current time)
+        const firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
+        console.log(firstTimeConverted);
+
+        // Current Time
+        const currentTime = moment();
+        console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+
+        // Difference between the times
+        const diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+        console.log("DIFFERENCE IN TIME: " + diffTime);
+
+        // Time apart (remainder)
+        const tRemainder = diffTime % tFrequency;
+        console.log(tRemainder);
+
+        // Minute Until Train
+        const tMinutesTillTrain = tFrequency - tRemainder;
+        console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+
+        // Next Train
+        const nextTrainObject = moment().add(tMinutesTillTrain, "minutes");
+        console.log("ARRIVAL TIME: " + moment(nextTrainObject).format("hh:mm"));
+
+        const nextTrain = moment(nextTrainObject).format("HH:mm");
         //populate with info
-        employeeNameTD.innerText = employee.employeeName;
-        roleTD.innerText = employee.role;
-        startDateTD.innerText = employee.startDate;
-        monthsWorkedTD.innerText = "some text here";
-        monthlyRateTD.innerText = employee.monthlyRate;
-        totalBilledTD.innerText = "some more text";
+        trainNameTD.innerText = train.trainName;
+        destinationTD.innerText = train.destination;
+        frequencyTD.innerText = train.frequency;
+        nextArrivalTD.innerText = nextTrain;
+        minutesAwayTD.innerText = tMinutesTillTrain;
 
         //append td to tr
-        employeeTR.append(employeeNameTD);
-        employeeTR.append(roleTD);
-        employeeTR.append(startDateTD);
-        employeeTR.append(monthsWorkedTD);
-        employeeTR.append(monthlyRateTD);
-        employeeTR.append(totalBilledTD);
+        trainTR.append(trainNameTD);
+        trainTR.append(destinationTD);
+        trainTR.append(frequencyTD);
+        trainTR.append(nextArrivalTD);
+        trainTR.append(minutesAwayTD);
 
         // append tr to table body
-        employeeTableBody.append(employeeTR);
+        trainTableBody.append(trainTR);
     })
 
     //append element ot container
 }
 // displayHighScores();
 
-function renderEmployeeData() {
+function renderTrainData() {
     // console.log("timer test")
-    const employeeTableBody = document.getElementById("employee-table-body");
-    getEmployeeData(function(employeeData) {
+    const trainTableBody = document.getElementById("train-table-body");
+    getTrainData(function (trainData) {
         // console.log(employeeData);
-        employeeTableBody.innerHTML = "";
-        for (let i = 0; i < employeeData.length; i++) {
+        trainTableBody.innerHTML = "";
+        for (let i = 0; i < trainData.length; i++) {
             // console.log("employee data at",i,employeeData[i]);
-            const employeeTR = document.createElement("tr");
-            const employeeNameTD = document.createElement("td");
-            const roleTD = document.createElement("td");
-            const startDateTD = document.createElement("td");
-            const monthsWorkedTD = document.createElement("td");
-            const monthlyRateTD = document.createElement("td");
-            const totalBilledTD = document.createElement("td");
+            const trainTR = document.createElement("tr");
+            const trainNameTD = document.createElement("td");
+            const destinationTD = document.createElement("td");
+            const frequencyTD = document.createElement("td");
+            const nextArrivalTD = document.createElement("td");
+            const minutesAwayTD = document.createElement("td");
 
-            let employee = employeeData[i];
+            let train = trainData[i];
+
+            // Solved Mathematically
+            // Test case 1:
+            // 16 - 00 = 16
+            // 16 % 3 = 1 (Modulus is the remainder)
+            // 3 - 1 = 2 minutes away
+            // 2 + 3:16 = 3:18
+
+            // Solved Mathematically
+            // Test case 2:
+            // 16 - 00 = 16
+            // 16 % 7 = 2 (Modulus is the remainder)
+            // 7 - 2 = 5 minutes away
+            // 5 + 3:16 = 3:21
+
+            // Assumptions
+            const tFrequency = train.frequency;
+
+            // Time is 3:30 AM
+            var firstTime = train.firstArrival;
+
+            // First Time (pushed back 1 year to make sure it comes before current time)
+            var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
+            console.log(firstTimeConverted);
+
+            // Current Time
+            var currentTime = moment();
+            console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+
+            // Difference between the times
+            var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+            console.log("DIFFERENCE IN TIME: " + diffTime);
+
+            // Time apart (remainder)
+            var tRemainder = diffTime % tFrequency;
+            console.log(tRemainder);
+
+            // Minute Until Train
+            var tMinutesTillTrain = tFrequency - tRemainder;
+            console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+
+            // Next Train
+            const nextTrainObject = moment().add(tMinutesTillTrain, "minutes");
+            console.log("ARRIVAL TIME: " + moment(nextTrainObject).format("hh:mm"));
+
+            const nextTrain = moment(nextTrainObject).format("HH:mm");
 
             //populate with info
-            employeeNameTD.innerText = employee.employeeName;
-            roleTD.innerText = employee.role;
-            startDateTD.innerText = employee.startDate;
-            monthsWorkedTD.innerText = "some text here";
-            monthlyRateTD.innerText = employee.monthlyRate;
-            totalBilledTD.innerText = "some more text";
+            trainNameTD.innerText = train.trainName;
+            destinationTD.innerText = train.destination;
+            frequencyTD.innerText = train.frequency;
+            nextArrivalTD.innerText = nextTrain;
+            minutesAwayTD.innerText = tMinutesTillTrain;
 
             //append td to tr
-            employeeTR.append(employeeNameTD);
-            employeeTR.append(roleTD);
-            employeeTR.append(startDateTD);
-            employeeTR.append(monthsWorkedTD);
-            employeeTR.append(monthlyRateTD);
-            employeeTR.append(totalBilledTD);
+            trainTR.append(trainNameTD);
+            trainTR.append(destinationTD);
+            trainTR.append(frequencyTD);
+            trainTR.append(nextArrivalTD);
+            trainTR.append(minutesAwayTD);
 
             // append tr to table body
-            employeeTableBody.append(employeeTR);
+            trainTableBody.append(trainTR);
         }
     })
 }
 
-renderEmployeeData();
+renderTrainData();
 
-let renderUpdate = setInterval(renderEmployeeData, 500);
+let renderUpdate = setInterval(renderTrainData, 60000);
 
